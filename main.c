@@ -556,3 +556,95 @@ void showReports(int deliveryCount, float deliveries[][9], char cities[][MAX_NAM
            minDist);
     printf("========================================\n");
 }
+
+
+
+
+void saveToFile(char cities[][MAX_NAME], int cityCount, int distance[][MAX_CITIES],
+                int deliveryCount, float deliveries[][9])
+{
+    FILE *fp = fopen("routes.txt", "w");
+    if (fp == NULL)
+    {
+        printf("\nError saving routes!\n");
+        return;
+    }
+
+    fprintf(fp, "%d\n", cityCount);
+    for (int i = 0; i < cityCount; i++)
+    {
+        fprintf(fp, "%s\n", cities[i]);
+    }
+
+    for (int i = 0; i < cityCount; i++)
+    {
+        for (int j = 0; j < cityCount; j++)
+        {
+            fprintf(fp, "%d ", distance[i][j]);
+        }
+        fprintf(fp, "\n");
+    }
+    fclose(fp);
+
+    fp = fopen("deliveries.txt", "w");
+    if (fp == NULL)
+    {
+        printf("\nError saving deliveries!\n");
+        return;
+    }
+
+    fprintf(fp, "%d\n", deliveryCount);
+    for (int i = 0; i < deliveryCount; i++)
+    {
+        for (int j = 0; j < 9; j++)
+        {
+            fprintf(fp, "%.2f ", deliveries[i][j]);
+        }
+        fprintf(fp, "\n");
+    }
+    fclose(fp);
+}
+
+int loadFromFile(char cities[][MAX_NAME], int cityCount, int distance[][MAX_CITIES],
+                 int deliveryCount, float deliveries[][9])
+{
+    FILE *fp = fopen("routes.txt", "r");
+    if (fp == NULL)
+    {
+        return 0;
+    }
+
+    fscanf(fp, "%d", &cityCount);
+    for (int i = 0; i < cityCount; i++)
+    {
+        fscanf(fp, " %[^\n]", cities[i]);
+    }
+
+    for (int i = 0; i < cityCount; i++)
+    {
+        for (int j = 0; j < cityCount; j++)
+        {
+            fscanf(fp, "%d", &distance[i][j]);
+        }
+    }
+    fclose(fp);
+
+    fp = fopen("deliveries.txt", "r");
+    if (fp == NULL)
+    {
+        return cityCount * 1000000;
+    }
+
+    fscanf(fp, "%d", &deliveryCount);
+    for (int i = 0; i < deliveryCount; i++)
+    {
+        for (int j = 0; j < 9; j++)
+        {
+            fscanf(fp, "%f", &deliveries[i][j]);
+        }
+    }
+    fclose(fp);
+
+    printf("\nData loaded successfully!\n");
+    return cityCount * 1000000 + deliveryCount;
+}
