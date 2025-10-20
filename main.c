@@ -498,3 +498,61 @@ int handleDelivery(char cities[][MAX_NAME], int cityCount, int distance[][MAX_CI
 
     return deliveryCount;
 }
+
+
+
+void showReports(int deliveryCount, float deliveries[][9], char cities[][MAX_NAME])
+{
+    if (deliveryCount == 0)
+    {
+        printf("\nNo deliveries recorded yet!\n");
+        return;
+    }
+
+    float totalDistance = 0;
+    float totalTime = 0;
+    float totalRevenue = 0;
+    float totalProfit = 0;
+    float maxDist = 0;
+    float minDist = 999999;
+    int maxIdx = 0;
+    int minIdx = 0;
+
+    for (int i = 0; i < deliveryCount; i++)
+    {
+        totalDistance += deliveries[i][2];
+        totalTime += deliveries[i][6];
+        totalRevenue += deliveries[i][8];
+        totalProfit += deliveries[i][7];
+
+        if (deliveries[i][2] > maxDist)
+        {
+            maxDist = deliveries[i][2];
+            maxIdx = i;
+        }
+        if (deliveries[i][2] < minDist)
+        {
+            minDist = deliveries[i][2];
+            minIdx = i;
+        }
+    }
+
+    printf("\n========================================\n");
+    printf("        PERFORMANCE REPORTS\n");
+    printf("========================================\n");
+    printf("Total Deliveries: %d\n", deliveryCount);
+    printf("Total Distance Covered: %.2f km\n", totalDistance);
+    printf("Average Delivery Time: %.2f hours\n", totalTime / deliveryCount);
+    printf("Total Revenue: %.2f LKR\n", totalRevenue);
+    printf("Total Profit: %.2f LKR\n", totalProfit);
+    printf("----------------------------------------\n");
+    printf("Longest Route: %s to %s (%.0f km)\n",
+           cities[(int)deliveries[maxIdx][0]],
+           cities[(int)deliveries[maxIdx][1]],
+           maxDist);
+    printf("Shortest Route: %s to %s (%.0f km)\n",
+           cities[(int)deliveries[minIdx][0]],
+           cities[(int)deliveries[minIdx][1]],
+           minDist);
+    printf("========================================\n");
+}
