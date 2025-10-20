@@ -228,3 +228,52 @@ int manageCities(char cities[][MAX_NAME], int cityCount)
     }
     return cityCount;
 }
+
+
+
+void manageDistances(char cities[][MAX_NAME], int cityCount, int distance[][MAX_CITIES])
+{
+    if (cityCount < 2)
+    {
+        printf("\nNeed at least 2 cities to set distances!\n");
+        return;
+    }
+
+    printf("\nCities:\n");
+    for (int i = 0; i < cityCount; i++)
+    {
+        printf("%d. %s\n", i + 1, cities[i]);
+    }
+
+    int city1, city2, dist;
+    printf("Enter first city number: ");
+    scanf("%d", &city1);
+    printf("Enter second city number: ");
+    scanf("%d", &city2);
+
+    if (city1 < 1 || city1 > cityCount || city2 < 1 || city2 > cityCount)
+    {
+        printf("\nInvalid city numbers!\n");
+        return;
+    }
+
+    if (city1 == city2)
+    {
+        printf("\nCannot set distance from city to itself!\n");
+        return;
+    }
+
+    printf("Enter distance (km): ");
+    scanf("%d", &dist);
+
+    if (dist < 0)
+    {
+        printf("\nDistance cannot be negative!\n");
+        return;
+    }
+
+    distance[city1 - 1][city2 - 1] = dist;
+    distance[city2 - 1][city1 - 1] = dist;
+
+    printf("\nDistance set: %s <-> %s = %d km\n", cities[city1 - 1], cities[city2 - 1], dist);
+}
