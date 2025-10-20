@@ -277,3 +277,69 @@ void manageDistances(char cities[][MAX_NAME], int cityCount, int distance[][MAX_
 
     printf("\nDistance set: %s <-> %s = %d km\n", cities[city1 - 1], cities[city2 - 1], dist);
 }
+
+
+void displayDistanceTable(char cities[][MAX_NAME], int cityCount, int distance[][MAX_CITIES])
+{
+    if (cityCount == 0)
+    {
+        printf("\nNo cities available!\n");
+        return;
+    }
+
+    printf("\n%-15s", "City");
+    for (int i = 0; i < cityCount; i++)
+    {
+        printf("%-10s", cities[i]);
+    }
+    printf("\n");
+
+    for (int i = 0; i < cityCount; i++)
+    {
+        printf("%-15s", cities[i]);
+        for (int j = 0; j < cityCount; j++)
+        {
+            printf("%-10d", distance[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void findShortestPath(int distance[][MAX_CITIES], int cityCount, int source, int dest,
+                      int visited[], int currentDist, int minDist[], int currentPath[],
+                      int pathLen, int bestPath[], int bestPathLen[])
+{
+
+    visited[source] = 1;
+    currentPath[pathLen] = source;
+    pathLen++;
+
+
+    if (source == dest)
+    {
+        if (currentDist < minDist[0])
+        {
+            minDist[0] = currentDist;
+            bestPathLen[0] = pathLen;
+            for (int i = 0; i < pathLen; i++)
+            {
+                bestPath[i] = currentPath[i];
+            }
+        }
+    }
+    else
+    {
+
+        for (int i = 0; i < cityCount; i++)
+        {
+            if (visited[i] == 0 && distance[source][i] > 0)
+            {
+                findShortestPath(distance, cityCount, i, dest, visited,
+                                 currentDist + distance[source][i], minDist,
+                                 currentPath, pathLen, bestPath, bestPathLen);
+            }
+        }
+    }
+
+    visited[source] = 0;
+}
