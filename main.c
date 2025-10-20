@@ -343,3 +343,40 @@ void findShortestPath(int distance[][MAX_CITIES], int cityCount, int source, int
 
     visited[source] = 0;
 }
+
+
+
+void displayDeliveryEstimate(char cities[][MAX_NAME], int source, int dest, int dist,
+                             int weight, int vehicleType)
+{
+    int rate = vehicleRate[vehicleType];
+    int speed = vehicleSpeed[vehicleType];
+    int efficiency = vehicleEfficiency[vehicleType];
+
+    float cost = dist * rate * (1 + (weight / 10000.0));
+    float time = (float)dist / speed;
+    float fuelUsed = (float)dist / efficiency;
+    float fuelCost = fuelUsed * FUEL_PRICE;
+    float totalCost = cost + fuelCost;
+    float profit = cost * 0.25;
+    float customerCharge = totalCost + profit;
+
+    printf("\n======================================================\n");
+    printf("            DELIVERY COST ESTIMATION\n");
+    printf("------------------------------------------------------\n");
+    printf("From: %s\n", cities[source]);
+    printf("To: %s\n", cities[dest]);
+    printf("Minimum Distance: %d km\n", dist);
+    printf("Vehicle: %s\n", vehicleNames[vehicleType]);
+    printf("Weight: %d kg\n", weight);
+    printf("------------------------------------------------------\n");
+    printf("Base Cost: %d x %d x (1 + %d/10000) = %.2f LKR\n",
+           dist, rate, weight, cost);
+    printf("Fuel Used: %.2f L\n", fuelUsed);
+    printf("Fuel Cost: %.2f LKR\n", fuelCost);
+    printf("Operational Cost: %.2f LKR\n", totalCost);
+    printf("Profit (25%%): %.2f LKR\n", profit);
+    printf("Customer Charge: %.2f LKR\n", customerCharge);
+    printf("Estimated Time: %.2f hours\n", time);
+    printf("======================================================\n");
+}
