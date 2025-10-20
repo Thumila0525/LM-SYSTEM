@@ -380,3 +380,121 @@ void displayDeliveryEstimate(char cities[][MAX_NAME], int source, int dest, int 
     printf("Estimated Time: %.2f hours\n", time);
     printf("======================================================\n");
 }
+
+
+
+int handleDelivery(char cities[][MAX_NAME], int cityCount, int distance[][MAX_CITIES],
+                   int deliveryCount, float deliveries[][9])
+{
+    if (cityCount < 2)
+    {
+        printf("\nNeed at least 2 cities for delivery!\n");
+        return deliveryCount;
+    }
+
+    if (deliveryCount >= MAX_DELIVERIES)
+    {
+        printf("\nMaximum delivery limit reached!\n");
+        return deliveryCount;
+    }
+
+    printf("\nCities:\n");
+    for (int i = 0; i < cityCount; i++)
+    {
+        printf("%d. %s\n", i + 1, cities[i]);
+    }
+
+    int source, dest, weight, vehicleType;
+    printf("\nEnter source city number: ");
+    scanf("%d", &source);
+    printf("Enter destination city number: ");
+    scanf("%d", &dest);
+
+    if (source < 1 || source > cityCount || dest < 1 || dest > cityCount)
+    {
+        printf("\nInvalid city numbers!\n");
+        return deliveryCount;
+    }
+
+    if (source == dest)
+    {
+        printf("\nSource and destination cannot be same!\n");
+        return deliveryCount;
+    }
+
+    printf("Enter weight (kg): ");
+    scanf("%d", &weight);
+
+    printf("\nVehicle Types:\n");
+    printf("1. Van (Capacity: 1000 kg)\n");
+    printf("2. Truck (Capacity: 5000 kg)\n");
+    printf("3. Lorry (Capacity: 10000 kg)\n");
+    printf("Select vehicle (1-3): ");
+    scanf("%d", &vehicleType);
+
+    if (vehicleType < 1 || vehicleType > 3)
+    {
+        printf("\nInvalid vehicle type!\n");
+        return deliveryCount;
+    }
+
+    vehicleType--;
+
+    if (weight > vehicleCapacity[vehicleType])
+    {
+        printf("\nWeight exceeds vehicle capacity!\n");
+        return deliveryCount;
+    }
+
+    int visited[MAX_CITIES] = {0};
+    int minDist[1] = {INT_MAX};
+    int currentPath[MAX_CITIES];
+    int bestPath[MAX_CITIES];
+    int bestPathLen[1] = {0};
+
+    findShortestPath(distance, cityCount, source - 1, dest - 1, visited, 0,
+                     minDist, currentPath, 0, bestPath, bestPathLen);
+
+    if (minDist[0] == INT_MAX)
+    {
+        printf("\nNo route available between these cities!\n");
+        return deliveryCount;
+    }
+
+    printf("\nOptimal Route: ");
+    for (int i = 0; i < bestPathLen[0]; i++)
+    {
+        printf("%s", cities[bestPath[i]]);
+        if (i < bestPathLen[0] - 1) printf(" -> ");
+    }
+    printf("\n");
+
+    displayDeliveryEstimate(cities, source - 1, dest - 1, minDist[0], weight, vehicleType);
+
+    int rate = vehicleRate[vehicleType];
+    int speed = vehicleSpeed[vehicleType];
+    int efficiency = vehicleEfficiency[vehicleType];
+
+    float cost = minDist[0] * rate * (1 + (weight / 10000.0));
+    float time = (float)minDist[0] / speed;
+    float fuelUsed = (float)minDist[0] / efficiency;
+    float fuelCost = fuelUsed * FUEL_PRICE;
+    float totalCost = cost + fuelCost;
+    float profit = cost * 0.25;
+    float customerCharge = totalCost + profit;
+
+    deliveries[deliveryCount][0] = source - 1;
+    deliveries[deliveryCount][1] = dest - 1;
+    deliveries[deliveryCount][2] = minDist[0];
+    deliveries[deliveryCount][3] = weight;
+    deliveries[deliveryCount][4] = vehicleType;
+    deliveries[deliveryCount][5] = totalCost;
+    deliveries[deliveryCount][6] = time;
+    deliveries[deliveryCount][7] = profit;
+    deliveries[deliveryCount][8] = customerCharge;
+
+    deliveryCount++;
+    printf("\nDelivery recorded successfully!\n");
+
+    return deliveryCount;
+}
